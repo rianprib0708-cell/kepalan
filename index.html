@@ -3,33 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Gesture Particles</title>
+    <title>Glow Magic Particles Pro</title>
     <style>
-        body { margin: 0; overflow: hidden; background: #000; font-family: 'Segoe UI', sans-serif; }
-        canvas { display: block; }
+        body { margin: 0; overflow: hidden; background: radial-gradient(circle, #0a0a1a 0%, #000000 100%); font-family: 'Segoe UI', sans-serif; }
         #ui-info {
-            position: absolute; top: 10px; left: 10px;
-            background: rgba(0,0,0,0.7); color: white; padding: 15px;
-            border-radius: 12px; font-size: 13px; pointer-events: none;
-            border: 1px solid rgba(0, 251, 255, 0.3);
-            line-height: 1.6;
+            position: absolute; top: 20px; left: 20px;
+            background: rgba(0, 20, 40, 0.7); color: white; padding: 20px;
+            border-radius: 15px; font-size: 13px; pointer-events: none;
+            border: 1px solid #00fbff; backdrop-filter: blur(10px); z-index: 100;
         }
         #webcam { 
-            position: absolute; bottom: 10px; right: 10px; 
-            width: 130px; border-radius: 10px; transform: scaleX(-1);
-            border: 2px solid #00fbff;
+            position: absolute; bottom: 20px; right: 20px; 
+            width: 140px; border-radius: 12px; transform: scaleX(-1);
+            border: 2px solid #00fbff; z-index: 100;
         }
-        .status { color: #00fbff; font-weight: bold; }
+        .status { color: #00fbff; font-weight: bold; text-shadow: 0 0 8px #00fbff; }
     </style>
 </head>
 <body>
 
     <div id="ui-info">
-        <b style="font-size: 16px; color: #00fbff;">Interactive Particles Pro</b><br>
-        🔄 Geser Tangan: <span class="status">Putar Partikel</span><br>
-        🖐️ Buka Tangan: <span class="status">Dispersion</span><br>
-        🫰 Finger Heart: <span class="status">Hati ✨</span><br>
-        ✌️ Peace Sign: <span class="status">Teks "I LOVE U"</span>
+        <b style="font-size: 18px; color: #00fbff;">✨ MAGIC PARTICLES V4</b><br><br>
+        🖐️ Buka Tangan: <span class="status">Ledakan</span><br>
+        🫰 Jempol-Telunjuk: <span class="status">BENTUK HATI</span><br>
+        ✌️ Dua Jari: <span class="status">TEKS "I LOVE U"</span><br>
+        🔄 Geser Tangan: <span class="status">Putar Partikel</span>
     </div>
 
     <video id="webcam" autoplay playsinline></video>
@@ -46,15 +44,13 @@
         let scene, camera, renderer, particles, material;
         let particleCount = 15000; 
         let currentShape = 'sphere';
-        let handOpenness = 0;
-        let targetRotationY = 0;
-        let lastHandX = 0.5;
+        let handOpenness = 0, targetRotationY = 0, lastHandX = 0.5;
         const videoElement = document.getElementById('webcam');
 
         function init() {
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.z = 6;
+            camera.position.z = 7;
 
             renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
@@ -66,28 +62,6 @@
             animate();
         }
 
-        // Fungsi pembantu membuat huruf untuk "I LOVE U"
-        function getLetterPos(index, total, letter) {
-            let x = 0, y = (Math.random() - 0.5) * 2;
-            const t = Math.random() * Math.PI * 2;
-            
-            switch(letter) {
-                case 'I': x = -3; break;
-                case 'L': 
-                    x = -1.5; 
-                    if(Math.random() > 0.6) { x = -1.5 + Math.random(); y = -1; } 
-                    break;
-                case 'O': x = 0 + Math.cos(t) * 0.7; y = Math.sin(t) * 1; break;
-                case 'V': x = 1.5 + (Math.random()-0.5); y = (x-1.5)*2 * (Math.random() > 0.5 ? 1 : -1); break;
-                case 'E': 
-                    x = 3; 
-                    if(Math.random() > 0.5) { x = 3 + Math.random(); y = Math.random() > 0.5 ? 1 : (Math.random() > 0.5 ? 0 : -1); }
-                    break;
-                case 'U': x = 4.5 + Math.cos(t + Math.PI) * 0.7; y = Math.sin(t + Math.PI) * 1; if(y < 0) y = -y; break;
-            }
-            return { x: x * 0.7, y: y * 0.7 }; // Skala diperkecil
-        }
-
         function createParticles() {
             const geometry = new THREE.BufferGeometry();
             const posArray = new Float32Array(particleCount * 3);
@@ -96,14 +70,14 @@
             const textTarget = new Float32Array(particleCount * 3);
 
             for (let i = 0; i < particleCount; i++) {
-                // Sphere
+                // SPHERE
                 const phi = Math.acos(-1 + (2 * i) / particleCount);
                 const theta = Math.sqrt(particleCount * Math.PI) * phi;
                 sphereTarget[i*3] = 2.5 * Math.cos(theta) * Math.sin(phi);
                 sphereTarget[i*3+1] = 2.5 * Math.sin(theta) * Math.sin(phi);
                 sphereTarget[i*3+2] = 2.5 * Math.cos(phi);
 
-                // Heart (🫰)
+                // HEART (🫰)
                 const t = Math.random() * Math.PI * 2;
                 const hx = 16 * Math.pow(Math.sin(t), 3);
                 const hy = 13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t);
@@ -111,11 +85,18 @@
                 heartTarget[i*3+1] = hy * 0.18;
                 heartTarget[i*3+2] = (Math.random() - 0.5) * 1;
 
-                // I LOVE U (✌️)
-                const letters = ['I', 'L', 'O', 'V', 'E', 'U'];
-                const lTarget = getLetterPos(i, particleCount, letters[i % 6]);
-                textTarget[i*3] = lTarget.x;
-                textTarget[i*3+1] = lTarget.y;
+                // TEXT "I LOVE U" (✌️)
+                const charIndex = i % 7;
+                let tx = 0, ty = Math.random() * 2 - 1;
+                if(charIndex === 0) { tx = -4; ty = (Math.random()-0.5)*3; } // I
+                else if(charIndex === 1) { tx = -2; ty = (Math.random()-0.5)*3; if(Math.random()>0.7) {tx = -2+Math.random(); ty=-1.5;} } // L
+                else if(charIndex === 2) { const a=Math.random()*Math.PI*2; tx=0+Math.cos(a)*0.8; ty=Math.sin(a)*1; } // O
+                else if(charIndex === 3) { tx=1.5+Math.random()-0.5; ty=Math.abs(tx-1.5)*3-1.5; } // V
+                else if(charIndex === 4) { tx=3; ty=(Math.random()-0.5)*3; } // E (Sederhana)
+                else if(charIndex === 5) { const a=Math.random()*Math.PI; tx=5+Math.cos(a+Math.PI); ty=Math.sin(a+Math.PI)*1.5+1; } // U
+
+                textTarget[i*3] = tx * 0.8;
+                textTarget[i*3+1] = ty * 0.8;
                 textTarget[i*3+2] = (Math.random() - 0.5) * 0.5;
 
                 posArray[i*3] = sphereTarget[i*3];
@@ -128,34 +109,36 @@
             geometry.setAttribute('targetHeart', new THREE.BufferAttribute(heartTarget, 3));
             geometry.setAttribute('targetText', new THREE.BufferAttribute(textTarget, 3));
 
-            material = new THREE.ShaderMaterial({
-                uniforms: {
-                    uTime: { value: 0 },
-                    uExpand: { value: 0 },
-                    uShapeType: { value: 0.0 }
-                },
-                vertexShader: `
-                    uniform float uExpand;
-                    uniform float uShapeType;
-                    attribute vec3 targetSphere;
-                    attribute vec3 targetHeart;
-                    attribute vec3 targetText;
-                    void main() {
-                        vec3 target;
-                        if(uShapeType < 0.5) target = targetSphere;
-                        else if(uShapeType < 1.5) target = targetHeart;
-                        else target = targetText;
+            // Texture Glow
+            const canvas = document.createElement('canvas');
+            canvas.width = 64; canvas.height = 64;
+            const ctx = canvas.getContext('2d');
+            const grad = ctx.createRadialGradient(32,32,0,32,32,32);
+            grad.addColorStop(0, 'rgba(255,255,255,1)');
+            grad.addColorStop(0.2, 'rgba(0,251,255,0.8)');
+            grad.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = grad; ctx.fillRect(0,0,64,64);
+            const texture = new THREE.CanvasTexture(canvas);
 
+            material = new THREE.ShaderMaterial({
+                uniforms: { uExpand: { value: 0 }, uShapeType: { value: 0 }, uColor: { value: new THREE.Color(0x00fbff) }, uTexture: { value: texture } },
+                vertexShader: `
+                    uniform float uExpand; uniform float uShapeType;
+                    attribute vec3 targetSphere; attribute vec3 targetHeart; attribute vec3 targetText;
+                    void main() {
+                        vec3 target = targetSphere;
+                        if(uShapeType > 0.5 && uShapeType < 1.5) target = targetHeart;
+                        else if(uShapeType > 1.5) target = targetText;
                         vec3 pos = target + (target * uExpand * 2.5);
-                        gl_PointSize = 2.0;
+                        gl_PointSize = 4.0;
                         gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
                     }
                 `,
                 fragmentShader: `
-                    void main() {
-                        gl_FragColor = vec4(0.0, 0.98, 1.0, 1.0);
-                    }
-                `
+                    uniform vec3 uColor; uniform sampler2D uTexture;
+                    void main() { gl_FragColor = vec4(uColor, 1.0) * texture2D(uTexture, gl_PointCoord); }
+                `,
+                transparent: true, blending: THREE.AdditiveBlending, depthWrite: false
             });
 
             particles = new THREE.Points(geometry, material);
@@ -163,48 +146,31 @@
         }
 
         function setupHandTracking() {
-            const hands = new Hands({
-                locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
-            });
-
-            hands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.7, minTrackingConfidence: 0.7 });
-
+            const hands = new Hands({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}` });
+            hands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.8 });
             hands.onResults((res) => {
                 if (res.multiHandLandmarks && res.multiHandLandmarks[0]) {
                     const lm = res.multiHandLandmarks[0];
                     
-                    // 1. Logika Rotasi Mengikuti Tangan (X axis)
-                    let currentHandX = lm[9].x; // Ambil posisi tengah telapak
-                    let diffX = currentHandX - lastHandX;
-                    targetRotationY += diffX * 5; // Mengatur sensitivitas putaran
-                    lastHandX = currentHandX;
+                    // Putar Berdasarkan Tangan
+                    targetRotationY += (lm[9].x - lastHandX) * 5;
+                    lastHandX = lm[9].x;
 
-                    // 2. Deteksi Gestur Finger Heart (🫰) yang lebih peka
-                    const distThumbIndex = Math.hypot(lm[4].x - lm[8].x, lm[4].y - lm[8].y);
-                    const isMiddleDown = lm[12].y > lm[10].y;
-                    const isRingDown = lm[16].y > lm[14].y;
-
-                    // 3. Deteksi Peace (✌️)
+                    // Logika Gestur
+                    const dHeart = Math.hypot(lm[4].x - lm[8].x, lm[4].y - lm[8].y);
                     const isIndexUp = lm[8].y < lm[6].y;
                     const isMiddleUp = lm[12].y < lm[10].y;
+                    const isRingDown = lm[16].y > lm[14].y;
 
-                    if (isIndexUp && isMiddleUp && isRingDown) {
-                        currentShape = 'text'; // ✌️
-                    } else if (distThumbIndex < 0.04 && isMiddleDown) {
-                        currentShape = 'heart'; // 🫰
-                    } else {
-                        currentShape = 'sphere'; 
-                    }
+                    if (isIndexUp && isMiddleUp && isRingDown && Math.abs(lm[8].x - lm[12].x) > 0.05) currentShape = 'text';
+                    else if (dHeart < 0.035) currentShape = 'heart';
+                    else currentShape = 'sphere';
 
-                    const distExpand = Math.hypot(lm[8].x - lm[0].x, lm[8].y - lm[0].y);
-                    handOpenness = THREE.MathUtils.lerp(handOpenness, Math.max(0, (distExpand - 0.3) * 3), 0.1);
+                    const dExpand = Math.hypot(lm[8].x - lm[0].x, lm[8].y - lm[0].y);
+                    handOpenness = THREE.MathUtils.lerp(handOpenness, Math.max(0, (dExpand - 0.35) * 3), 0.1);
                 }
             });
-
-            const cam = new Camera(videoElement, {
-                onFrame: async () => { await hands.send({ image: videoElement }); },
-                width: 640, height: 480
-            });
+            const cam = new Camera(videoElement, { onFrame: async () => { await hands.send({ image: videoElement }); }, width: 640, height: 480 });
             cam.start();
         }
 
@@ -212,24 +178,19 @@
             requestAnimationFrame(animate);
             if(material) {
                 material.uniforms.uExpand.value = handOpenness;
-                let targetType = currentShape === 'sphere' ? 0.0 : (currentShape === 'heart' ? 1.0 : 2.0);
-                material.uniforms.uShapeType.value = THREE.MathUtils.lerp(material.uniforms.uShapeType.value, targetType, 0.08);
-                
-                // Rotasi halus mengikuti target dari gerakan tangan
+                let tType = currentShape === 'sphere' ? 0 : (currentShape === 'heart' ? 1 : 2);
+                material.uniforms.uShapeType.value = THREE.MathUtils.lerp(material.uniforms.uShapeType.value, tType, 0.1);
                 particles.rotation.y = THREE.MathUtils.lerp(particles.rotation.y, targetRotationY, 0.1);
-                // Tambahkan rotasi otomatis sedikit agar tetap hidup
                 particles.rotation.y += 0.002;
             }
             renderer.render(scene, camera);
         }
 
+        init();
         window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
+            camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
-
-        init();
     </script>
 </body>
 </html>
